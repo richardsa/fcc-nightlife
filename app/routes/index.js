@@ -6,11 +6,14 @@ var SearchHandler = require(path + '/app/controllers/searchHandler.server.js');
 
 module.exports = function(app, passport) {
 
-    function isLoggedIn(req, res, next) {
+     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated()) {
             return next();
         } else {
-            res.redirect('/login');
+
+            res.send(JSON.stringify({
+                error: "you are not logged in."
+            }))
         }
     }
 
@@ -30,6 +33,9 @@ module.exports = function(app, passport) {
         .get(function(req, res) {
             res.sendFile(path + '/public/index.html');
         });
+    app.route('/rsvp/:bar')
+        .get(searchHandler.rsvp);    
+        
 
     app.route('/login')
         .get(function(req, res) {

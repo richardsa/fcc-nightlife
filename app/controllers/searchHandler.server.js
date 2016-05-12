@@ -24,20 +24,42 @@ function SearchHandler() {
   .catch(function (err) {
     console.error(err);
   });*/
-
+this.rsvp = function(req,res){
+  var barId = req.params.bar;
+  res.send(barId);
+}
   
   this.request_yelp = function(req,res){
-    console.log(req.params);
-    console.log(req.query);
-    console.log(req.query.searchInput);
-   // var searchTerms = req.params.searchInput;
+    var outputArr = [];
+    var outputObj = {}; 
+    // var searchTerms = req.params.searchInput;
    var searchLocation = req.query.searchInput;
     console.log(searchLocation);
     yelp.search({ term: 'bars', location: searchLocation })
     .then(function (data) {
-      console.log(data);
-      res.send(data);
+      //console.log(data);
+      //var results = JSON.parse(data);
+      var bars = data.businesses;
+      //console.log(bars);
+      
+      //console.log("bar s " + bars);
+      //res.send(data);
+       for (var i = 0; i < bars.length; i++ ){
+            var barInfo = {};
+          barInfo.image_url = bars[i].image_url;
+          barInfo.url = bars[i].url;
+          barInfo.snippet_text = bars[i].snippet_text;
+          barInfo.name = bars[i].name;
+          barInfo.id = bars[i].id;
+           outputArr.push(barInfo);
+         
+           //console.log(barInfo);
+        }
+     outputObj.bars = outputArr;
+     
+    res.send(outputObj);
     });
+   
   };
   /*
   // See http://www.yelp.com/developers/documentation/v2/business
