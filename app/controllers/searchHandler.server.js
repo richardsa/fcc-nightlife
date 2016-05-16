@@ -1,9 +1,11 @@
 /* require the modules needed */
-var oauthSignature = require('oauth-signature');  
-var n = require('nonce')();  
-var request = require('request');  
-var qs = require('querystring');  
+var oauthSignature = require('oauth-signature');
+var n = require('nonce')();
+var request = require('request');
+var qs = require('querystring');
 var _ = require('lodash');
+var Bars = require('../models/bars.js');
+
 function SearchHandler() {
 
   // Request API access: http://www.yelp.com/developers/getting_started/api_access
@@ -24,42 +26,77 @@ function SearchHandler() {
   .catch(function (err) {
     console.error(err);
   });*/
-this.rsvp = function(req,res){
-  var barId = req.params.bar;
-  res.send(barId);
-}
-  
-  this.request_yelp = function(req,res){
+ this.rsvp = function (req, res) {
+    var barId = req.params.bar;
+    Bars
+        .findOneAndUpdate({barId: barId}, { $inc: { 'nbrAttending': 1 } })
+        .exec(function (err, result) {
+                if (err) { throw err; }
+
+                if (result) {
+                    res.json(result);
+                } else {
+                    var newDoc = new Bars({barId: barId, 'nbrAttending': 1 });
+                    newDoc.save(function (err, doc) {
+                        if (err) { throw err; }
+
+                        res.json(doc);
+                    });
+
+                }
+            }
+        );
+};
+
+  this.request_yelp = function(req, res) {
     var outputArr = [];
-    var outputObj = {}; 
-    // var searchTerms = req.params.searchInput;
-   var searchLocation = req.query.searchInput;
-    console.log(searchLocation);
-    yelp.search({ term: 'bars', location: searchLocation })
-    .then(function (data) {
-      //console.log(data);
-      //var results = JSON.parse(data);
-      var bars = data.businesses;
-      //console.log(bars);
-      
-      //console.log("bar s " + bars);
-      //res.send(data);
-       for (var i = 0; i < bars.length; i++ ){
-            var barInfo = {};
-          barInfo.image_url = bars[i].image_url;
-          barInfo.url = bars[i].url;
-          barInfo.snippet_text = bars[i].snippet_text;
-          barInfo.name = bars[i].name;
-          barInfo.id = bars[i].id;
-           outputArr.push(barInfo);
-         
-           //console.log(barInfo);
+    var outputObj = {};
+    var searchLocation = req.query.searchInput;
+    yelp.search({
+        term: 'bars',
+        location: searchLocation
+      })
+      .then(function(data) {
+        var bars = data.businesses;
+        function asyncLoop( i, callback ) {
+            if( i < bars.length ) {
+              var barInfo = {};
+              console.log(i);
+              barInfo.image_url = bars[i].image_url;
+              barInfo.url = bars[i].url;
+              barInfo.snippet_text = bars[i].snippet_text;
+              barInfo.name = bars[i].name;
+              barInfo.id = bars[i].id;
+              Bars.findOne({
+                barId: barInfo.id
+              }, function(err, result) {
+                if (err) {
+                  throw err;
+                } console.log('huh');
+                if (!result) {
+                  barInfo.attending = 0;
+                  
+                } else {
+                  console.log("if attending " + result);
+                  barInfo.attending = result.nbrAttending;
+                }
+                outputArr.push(barInfo);
+            asyncLoop( i+1, callback ); 
+              });
+               
+            } else {
+                callback();
+            }
         }
-     outputObj.bars = outputArr;
-     
-    res.send(outputObj);
-    });
-   
+        //recursive loop from http://stackoverflow.com/a/21830088
+        asyncLoop( 0, function() {
+          outputObj.bars = outputArr;
+          console.log(outputObj);
+          res.send(outputObj);
+            // put the code that should happen after the loop here
+        });
+      });
+
   };
   /*
   // See http://www.yelp.com/developers/documentation/v2/business

@@ -6,7 +6,7 @@
     font-weight: 700;
     text-decoration:none;
 }
-.rsvpButton {background-color: blue; margin-left:10px; padding:10px; border-radius:10px;}
+.rsvpButton {background-color: blue; margin-left:10px; padding:10px; border-radius:10px; color:#ffffff;  font-weight: 700;}
 /****** Profile Styling ******/
 
 .github-profile {

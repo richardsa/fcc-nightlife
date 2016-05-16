@@ -34,7 +34,7 @@ module.exports = function(app, passport) {
             res.sendFile(path + '/public/index.html');
         });
     app.route('/rsvp/:bar')
-        .get(searchHandler.rsvp);    
+        .post(searchHandler.rsvp);    
         
 
     app.route('/login')

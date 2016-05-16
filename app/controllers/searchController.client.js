@@ -16,7 +16,7 @@
         for (var i = 0; i < bars.length; i++ ){
             output += "<li class='list-group-item'>";
             output += '<img src="' + bars[i].image_url + '" class="img-rounded img-business" alt="...">'
-           output += "<a href='" + bars[i].url + "'>" + bars[i].name + "</a><span class='rsvpButton'><a href='/rsvp/" + bars[i].id + "'>0 going</a></span><br />"
+           output += "<a href='" + bars[i].url + "'>" + bars[i].name + "</a><span class='rsvpButton' id='" + bars[i].id + "'>" +  bars[i].attending + " going</span><br />"
            output += bars[i].snippet_text
            output += "</li>"
            //console.log(bars[i].name)
@@ -26,7 +26,20 @@
         document.getElementById("searchResults").innerHTML = output
 
     }
+    
+   
+$( "#searchResults" ).on( "click", ".rsvpButton", function() {
+   var barId = $(this).attr('id');
+  var rsvpUrl = appUrl + "/rsvp/" + barId;
+  console.log(rsvpUrl);
+ //  ajaxFunctions.ajaxRequest('get', rsvpUrl);
+ //  ajaxFunctions.ajaxRequest('get', apiUrl, displayResults);
+  ajaxFunctions.ajaxRequest('POST', rsvpUrl, function () {
+        ajaxFunctions.ajaxRequest('GET', apiUrl, displayResults);
+      });
 
+  
+});
 
 //ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', apiUrl, displayResults));
 

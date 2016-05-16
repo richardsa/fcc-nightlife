@@ -5,7 +5,6 @@ var Schema = mongoose.Schema;
 
 var Bar = new Schema({
       barId: String,
-      githubId: String,
       nbrAttending: Number
 });
 
