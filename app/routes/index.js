@@ -3,6 +3,7 @@
 var path = process.cwd();
 var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
 var SearchHandler = require(path + '/app/controllers/searchHandler.server.js');
+ var apiUrl;
 
 module.exports = function(app, passport) {
 
@@ -21,13 +22,7 @@ module.exports = function(app, passport) {
     var searchHandler = new SearchHandler();
   app.route('/search')
        .get(searchHandler.request_yelp);
-       /*app.route('/search/:bars')
-       .get(function(req, res) {
-           console.log("index.js " + JSON.stringify(req.params));
-            searchHandler.request_yelp;
-        });*/
-
-
+       
 
     app.route('/')
         .get(function(req, res) {
@@ -39,6 +34,11 @@ module.exports = function(app, passport) {
 
     app.route('/login')
         .get(function(req, res) {
+            
+           apiUrl =  '/?searchInput=' + req.query.searchInput;
+           console.log(apiUrl);
+           // apiUrl  +=  req.query.searchInput;
+            
             res.sendFile(path + '/public/login.html');
         });
 
@@ -61,11 +61,14 @@ module.exports = function(app, passport) {
     app.route('/auth/github')
         .get(passport.authenticate('github'));
 
-    app.route('/auth/github/callback')
+    app.route('/auth/github/callback/')
         .get(passport.authenticate('github', {
-            successRedirect: '/',
             failureRedirect: '/login'
-        }));
+        }),  function(req, res) {
+    // If this function gets called, authentication was successful.
+    // `req.user` contains the authenticated user.
+    res.redirect(apiUrl)}
+        );
 
     app.route('/api/:id/clicks')
         .get(isLoggedIn, clickHandler.getClicks)

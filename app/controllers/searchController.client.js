@@ -1,71 +1,69 @@
 'use strict';
 
 (function() {
-    var searchButton = document.querySelector('#searchSubmit');
-    //var searchResults = document.querySelector('#searchResults');
-    var allPolls = document.querySelector('#searchResults');
-    var apiUrl = appUrl + '/search?searchInput=';
+  var searchButton = document.querySelector('#searchSubmit');
+  var allPolls = document.querySelector('#searchResults');
+  var apiUrl = appUrl + '/search?searchInput=';
+  var searchQuery;
 
-    function displayResults(data) {
-        
-        var results = JSON.parse(data);
-        var bars = results.bars;
-        console.log(results);
-        results += "yeah buddy";
-        var output = "<ul class='list-group'>";
-        for (var i = 0; i < bars.length; i++ ){
-            output += "<li class='list-group-item'>";
-            output += '<img src="' + bars[i].image_url + '" class="img-rounded img-business" alt="...">'
-           output += "<a href='" + bars[i].url + "'>" + bars[i].name + "</a><span class='rsvpButton' id='" + bars[i].id + "'>" +  bars[i].attending + " going</span><br />"
-           output += bars[i].snippet_text
-           output += "</li>"
-           //console.log(bars[i].name)
-        }
-        output += "</ul>";
-        //console.log(output);
-        document.getElementById("searchResults").innerHTML = output
-
+  // main function for displaying search results
+  function displayResults(data) {
+    var results = JSON.parse(data);
+    var bars = results.bars;
+    var output = "<ul class='list-group'>";
+    for (var i = 0; i < bars.length; i++) {
+      output += "<li class='list-group-item'>";
+      output += '<img src="' + bars[i].image_url + '" class="img-rounded img-business" alt="...">';
+      output += "<a href='" + bars[i].url + "'>" + bars[i].name + "</a><span class='rsvpButton' id='" + bars[i].id + "'>" + bars[i].attending + " going</span><br />";
+      output += bars[i].snippet_text;
+      output += "</li>";
     }
-    
-   function getRsvp(data){
-      var response = JSON.parse(data);
-     
+    output += "</ul>";
+    document.getElementById("searchResults").innerHTML = output;
+
+  }
+  // main rsvp function
+  function getRsvp(data) {
+    var response = JSON.parse(data);
+    // if not logged in redirect to login page
     if (response.hasOwnProperty('error')) {
-      console.log('yeah bruh');
-      window.location.href = '/login';
+      window.location.href = '/login?searchInput=' + searchQuery;
       return;
     } else {
-    var barId = response.barId;
-    barId = "#" + barId;
+      var barId = response.barId;
+      barId = "#" + barId;
       var attending = response.nbrAttending;
       $(barId).text(attending + " going");
-     // var results = data;
-       console.log(response);
+      // var results = data;
+      console.log(response);
     }
-   }
-$( "#searchResults" ).on( "click", ".rsvpButton", function() {
-   var barId = $(this).attr('id');
-  var rsvpUrl = appUrl + "/rsvp/" + barId;
-  console.log(rsvpUrl);
- //  ajaxFunctions.ajaxRequest('get', rsvpUrl);
- //  ajaxFunctions.ajaxRequest('get', apiUrl, displayResults);
- ajaxFunctions.ajaxRequest('POST', rsvpUrl, getRsvp);
- /* ajaxFunctions.ajaxRequest('POST', rsvpUrl, function () {
-        ajaxFunctions.ajaxRequest('GET', apiUrl, displayResults);
-      });*/
+  }
+  // clicking rsvp button listener
+  $("#searchResults").on("click", ".rsvpButton", function() {
+    var barId = $(this).attr('id');
+    var rsvpUrl = appUrl + "/rsvp/" + barId;
+    console.log(rsvpUrl);
+    ajaxFunctions.ajaxRequest('POST', rsvpUrl, getRsvp);
+  });
 
-  
-});
+  // search listener
+  searchButton.addEventListener('click', function() {
+    searchQuery = $('#searchInput').val();
+    apiUrl += searchQuery;
+    ajaxFunctions.ajaxRequest('get', apiUrl, displayResults);
+  }, false);
 
-//ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', apiUrl, displayResults));
+  //function to check for query string at home address
+  $(function() {
+    var search = window.location.search;
 
-    searchButton.addEventListener('click', function() {
-        var location = $('#searchInput').val();
-        apiUrl += location;
-        console.log(apiUrl)
-        ajaxFunctions.ajaxRequest('get', apiUrl, displayResults);
-
-    }, false);
+    if (search.indexOf('searchInput=') >= 0) {
+      var searchUrl = appUrl + "/search" + search;
+      searchQuery = search.slice(13);
+      ajaxFunctions.ajaxRequest('get', searchUrl, displayResults);
+    }
+    console.log("ready!");
+  });
 
 
 

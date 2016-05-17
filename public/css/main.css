@@ -1,12 +1,13 @@
 /* search results */
 /* business imagees */
 .img-business {padding:10px;}
-.rsvpButton a, .rsvpButton a:hover  {
+.rsvpButton a, .rsvpButton a:hover, .rsvpButton:hover {
     color: white;
-    font-weight: 700;
+    font-weight: 900;
     text-decoration:none;
+    background-color: #000080;
 }
-.rsvpButton {background-color: blue; margin-left:10px; padding:10px; border-radius:10px; color:#ffffff;  font-weight: 700;}
+.rsvpButton {background-color: #0000FF; margin-left:10px; padding:10px; border-radius:10px; color:#ffffff;  font-weight: 700; cursor:pointer;}
 /****** Profile Styling ******/
 
 .github-profile {
