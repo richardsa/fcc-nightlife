@@ -10,7 +10,7 @@ module.exports = function(app, passport) {
         if (req.isAuthenticated()) {
             return next();
         } else {
-
+//res.redirect('/login');
             res.send(JSON.stringify({
                 error: "you are not logged in."
             }))
@@ -34,7 +34,7 @@ module.exports = function(app, passport) {
             res.sendFile(path + '/public/index.html');
         });
     app.route('/rsvp/:bar')
-        .post(searchHandler.rsvp);    
+        .post(isLoggedIn, searchHandler.rsvp);    
         
 
     app.route('/login')

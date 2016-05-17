@@ -27,16 +27,32 @@
 
     }
     
-   
+   function getRsvp(data){
+      var response = JSON.parse(data);
+     
+    if (response.hasOwnProperty('error')) {
+      console.log('yeah bruh');
+      window.location.href = '/login';
+      return;
+    } else {
+    var barId = response.barId;
+    barId = "#" + barId;
+      var attending = response.nbrAttending;
+      $(barId).text(attending + " going");
+     // var results = data;
+       console.log(response);
+    }
+   }
 $( "#searchResults" ).on( "click", ".rsvpButton", function() {
    var barId = $(this).attr('id');
   var rsvpUrl = appUrl + "/rsvp/" + barId;
   console.log(rsvpUrl);
  //  ajaxFunctions.ajaxRequest('get', rsvpUrl);
  //  ajaxFunctions.ajaxRequest('get', apiUrl, displayResults);
-  ajaxFunctions.ajaxRequest('POST', rsvpUrl, function () {
+ ajaxFunctions.ajaxRequest('POST', rsvpUrl, getRsvp);
+ /* ajaxFunctions.ajaxRequest('POST', rsvpUrl, function () {
         ajaxFunctions.ajaxRequest('GET', apiUrl, displayResults);
-      });
+      });*/
 
   
 });

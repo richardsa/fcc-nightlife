@@ -5,6 +5,8 @@ var request = require('request');
 var qs = require('querystring');
 var _ = require('lodash');
 var Bars = require('../models/bars.js');
+var Users = require('../models/users.js');
+var Rsvps = require('../models/rsvp.js');
 
 function SearchHandler() {
 
@@ -26,27 +28,98 @@ function SearchHandler() {
   .catch(function (err) {
     console.error(err);
   });*/
- this.rsvp = function (req, res) {
+  this.rsvp = function(req, res) {
+  //  console.log(req);
+    if (typeof req.user.github.id === "undefined") {
+      res.redirect('/login');
+    }
+    var githubId = req.user.github.id;
+    console.log(githubId);
     var barId = req.params.bar;
-    Bars
-        .findOneAndUpdate({barId: barId}, { $inc: { 'nbrAttending': 1 } })
-        .exec(function (err, result) {
-                if (err) { throw err; }
+    Rsvps.findOne({ barId: barId, githubId: githubId} , 
+     function (err,rsvp){
+       if (err) {
+         throw err;
+       }
+       if (rsvp){
+         console.log(rsvp);
+         rsvp.remove( function(err){
+           if (err) {
+         throw err;
+       }
+           console.log("poll deleted");
+         });
+         Bars
+           .findOneAndUpdate({
+             barId: barId
+           }, {
+             $inc: {
+               'nbrAttending': -1
+             }
+           }, {
+       'new': true
+     })
+           .exec(function(err, doc) {
+             if (err) {
+               throw err;
+             }
+             console.log("doc added after dec" + doc);
+             res.json(doc);
+       });
 
-                if (result) {
-                    res.json(result);
-                } else {
-                    var newDoc = new Bars({barId: barId, 'nbrAttending': 1 });
-                    newDoc.save(function (err, doc) {
-                        if (err) { throw err; }
+     } else {
+        var newRsvp = new Rsvps({
+          barId: barId,
+          githubId: githubId,
+        });
+        newRsvp.save(function(err, docRsvp) {
+          if (err) {
+            throw err;
+          }
+          console.log("new rsvp " + docRsvp);
+          Bars
+            .findOneAndUpdate({
+              barId: barId
+            }, {
+              $inc: {
+                'nbrAttending': 1
+              }, 
+            }, {
+        'new': true
+      })
+            .exec(function(err, result) {
+              if (err) {
+                throw err;
+              }
 
-                        res.json(doc);
-                    });
+              if (result) {
+                console.log('found and incremented' + result);
+                res.json(result);
+              } else {
+                var newDoc = new Bars({
+                  barId: barId,
+                  'nbrAttending': 1
+                });
+                newDoc.save(function(err, doc) {
+                  if (err) {
+                    throw err;
+                  }
+                  console.log("new bar " + doc);
+                  res.json(doc);
+                });
 
-                }
-            }
-        );
-};
+              }
+            });
+          
+        });
+
+      }
+
+// closing tags
+    });
+      
+    
+    };
 
   this.request_yelp = function(req, res) {
     var outputArr = [];
@@ -58,42 +131,44 @@ function SearchHandler() {
       })
       .then(function(data) {
         var bars = data.businesses;
-        function asyncLoop( i, callback ) {
-            if( i < bars.length ) {
-              var barInfo = {};
-              console.log(i);
-              barInfo.image_url = bars[i].image_url;
-              barInfo.url = bars[i].url;
-              barInfo.snippet_text = bars[i].snippet_text;
-              barInfo.name = bars[i].name;
-              barInfo.id = bars[i].id;
-              Bars.findOne({
-                barId: barInfo.id
-              }, function(err, result) {
-                if (err) {
-                  throw err;
-                } console.log('huh');
-                if (!result) {
-                  barInfo.attending = 0;
-                  
-                } else {
-                  console.log("if attending " + result);
-                  barInfo.attending = result.nbrAttending;
-                }
-                outputArr.push(barInfo);
-            asyncLoop( i+1, callback ); 
-              });
-               
-            } else {
-                callback();
-            }
+
+        function asyncLoop(i, callback) {
+          if (i < bars.length) {
+            var barInfo = {};
+            console.log(i);
+            barInfo.image_url = bars[i].image_url;
+            barInfo.url = bars[i].url;
+            barInfo.snippet_text = bars[i].snippet_text;
+            barInfo.name = bars[i].name;
+            barInfo.id = bars[i].id;
+            Bars.findOne({
+              barId: barInfo.id
+            }, function(err, result) {
+              if (err) {
+                throw err;
+              }
+              console.log('huh');
+              if (!result) {
+                barInfo.attending = 0;
+
+              } else {
+                console.log("if attending " + result);
+                barInfo.attending = result.nbrAttending;
+              }
+              outputArr.push(barInfo);
+              asyncLoop(i + 1, callback);
+            });
+
+          } else {
+            callback();
+          }
         }
         //recursive loop from http://stackoverflow.com/a/21830088
-        asyncLoop( 0, function() {
+        asyncLoop(0, function() {
           outputObj.bars = outputArr;
           console.log(outputObj);
           res.send(outputObj);
-            // put the code that should happen after the loop here
+          // put the code that should happen after the loop here
         });
       });
 
