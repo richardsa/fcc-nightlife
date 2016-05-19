@@ -1,3 +1,4 @@
+body {font-size:16px; font-weight:600;}
 /* search results */
 /* business imagees */
 .img-business {padding:10px;}
@@ -10,6 +11,11 @@
 .rsvpButton, #login-btn {background-color: #0000FF; margin-left:10px; padding:10px; border-radius:10px; color:#ffffff;  font-weight: 700; cursor:pointer;}
 
 #searchResults{padding-top:50px;}
+
+.list-group-item:hover {
+    background-color: #eee;
+}
+
 /****** Profile Styling ******/
 
 .github-profile {
