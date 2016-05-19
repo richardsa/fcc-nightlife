@@ -3,83 +3,58 @@
 <html>
 
 <head>
-    <title>Nightlife App - FreeCodeCamp</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<title>Nightlife App - FreeCodeCamp</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 
-    <link href="/public/css/main.css" rel="stylesheet" type="text/css">
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<link href="/public/css/main.css" rel="stylesheet" type="text/css">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 </head>
 
 
 <body>
-    <!--begin nav menu 
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
 
-                <a class="navbar-brand" href="/">Richie's FCC Nightlife App</a>
-            </div>
-
-            <div class="collapse navbar-collapse" id="main-navbar-collapse">
-
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/">Home</a></li>
-                    <li id="profileLink"></li>
-                    <li id="loginButton"></li>
-
-                </ul>
-            </div>
-        </div>
-    </nav>-->
-    <!--end nav menu -->
-    <div class="jumbotron text-center home main-section">
-        <div class="container">
+	<div class="jumbotron text-center home main-section">
+		<div class="container">
 
 
-            <h1>Richie's FCC Nightlife App</h1>
-            <p class="text-right">Powered by Yelp's API!</p>
+			<h1>Richie's FCC Nightlife App</h1>
+			<p class="text-right">Powered by Yelp's API!</p>
 
-        </div>
+		</div>
 
-    </div>
-    <div class="container">
-        <div class="row">
-            <h3>Enter your location to find nearby bars!</h3>
-            <form>
-                <div class="col-xs-9">
-                <div class="form-group">
-                
-            
-                        <label for="searchInput" class="sr-only">search terms</label>
-                        <input type="text" name="searchInput" class="form-control" id="searchInput" placeholder="Where are you?">
-                    </div>
-                </div>
-                      <div class="col-xs-3">
-                <div class="form-group">
-                  
-                        <button type="submit" id="searchSubmit1" class="btn btn-primary">Search</button>
-                    </div>
-                </div>
-            
-            </form>
-
-            <div id="searchResults"></div>
-        </div>
-    </div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<h3>Enter your location to find nearby bars!</h3>
+			<form>
+				<div class="col-xs-9">
+					<div class="form-group">
 
 
-    <script type="text/javascript" src="common/ajax-functions.js"></script>
-    <script type="text/javascript" src="controllers/searchController.client.js"></script>
-    <!--<script type="text/javascript" src="controllers/userController.client.js"></script>-->
+						<label for="searchInput" class="sr-only">search terms</label>
+						<input type="text" name="searchInput" class="form-control" id="searchInput" placeholder="Where are you?">
+					</div>
+				</div>
+				<div class="col-xs-3">
+					<div class="form-group">
+
+						<button type="submit" id="searchSubmit1" class="btn btn-primary">Search</button>
+					</div>
+				</div>
+
+			</form>
+
+			<div id="searchResults"></div>
+		</div>
+	</div>
+
+
+	<script type="text/javascript" src="common/ajax-functions.js"></script>
+	<script type="text/javascript" src="controllers/searchController.client.js"></script>
+	<!--<script type="text/javascript" src="controllers/userController.client.js"></script>-->
 
 
 
